@@ -6,7 +6,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { submitLead } from "@/lib/actions/lead-actions";
+// Static fallback handler bypassing backend logic for standalone client demonstrations
+const submitLead = async (profileId: string, data: any): Promise<{ success: boolean; error?: string }> => {
+    console.log("Static lead shared:", data);
+    return { success: true };
+};
 import { Loader2, Share2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 

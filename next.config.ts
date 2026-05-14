@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     },
   },
   turbopack: {}, // Silence Turbopack warning
-  output: 'standalone',
+  output: 'export',
   serverExternalPackages: ['sequelize', 'sequelize-typescript', 'mysql2'], // Prevent bundling of Sequelize
   webpack: (config) => {
     config.externals.push({
@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

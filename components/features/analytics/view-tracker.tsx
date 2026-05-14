@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { trackEvent } from "@/lib/actions/analytics-actions";
 import { v4 as uuidv4 } from 'uuid';
+
+// Client static fallback for purely uncoupled HTML presentations
+const trackEvent = async (profileId: string, eventType: string, eventData?: any, visitorId?: string) => {
+    console.log("Static Analytics Tracked:", eventType, profileId);
+    return { success: true };
+};
 
 export function ViewTracker({ profileId }: { profileId: string }) {
     useEffect(() => {
