@@ -1,14 +1,9 @@
-import NextAuth from "next-auth"
-import { authConfig } from "./auth.config"
-
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-const { auth } = NextAuth(authConfig)
-
-export default auth((req) => {
+export default function middleware(req: NextRequest) {
     const hostname = req.headers.get("host") || "";
     const path = req.nextUrl.pathname;
-    const isLoggedIn = !!req.auth;
 
     // Check for login subdomains (production and local)
     const isLoginSubdomain =
@@ -21,15 +16,10 @@ export default auth((req) => {
         return NextResponse.rewrite(new URL("/login", req.url));
     }
 
-    const isOnCreateCard = path.startsWith('/create-card');
-
-    console.log(`Middleware: ${path} | Host: ${hostname} | LoggedIn: ${isLoggedIn}`);
-
-    if (isOnCreateCard && !isLoggedIn) {
-        console.log("Middleware: Redirecting unauthenticated user from create-card to login");
-        return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
-    }
-})
+    // Completely bypass NextAuth Edge container initializations for pure static frontend demonstrations
+    // This entirely resolves x-vercel-error: MIDDLEWARE_INVOCATION_FAILED on Edge networks lacking backend oauth secrets
+    return NextResponse.next();
+}
 
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
