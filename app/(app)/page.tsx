@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Clock
 } from "lucide-react";
+import Image from "next/image";
 
 export default function MobileStoreProfilePage() {
   // Navigation tabs state
@@ -172,12 +173,21 @@ export default function MobileStoreProfilePage() {
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
             
             {/* Store Dynamic Avatar Wrapper */}
-            <div className="relative group">
+            <div className="relative group flex-shrink-0">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-500 animate-status-beacon" />
-              <div className="relative w-24 h-24 md:w-28 md:h-28 bg-slate-950 rounded-2xl flex items-center justify-center border-2 border-slate-800 overflow-hidden shadow-inner">
-                <span className="text-4xl md:text-5xl select-none animate-device-float">🛠️</span>
+              <div className="relative w-28 h-28 md:w-32 md:h-32 bg-slate-950 rounded-2xl flex items-center justify-center border-2 border-slate-800 overflow-hidden shadow-inner">
+                {/* Client Real DP Image */}
+                <Image 
+                  src="/karthikeyan_dp.jpg" 
+                  alt="Karthikeyan - Managing Partner" 
+                  width={140}
+                  height={140}
+                  className="w-full h-full object-cover object-top"
+                  priority
+                />
+                <span className="text-4xl md:text-5xl select-none absolute inset-0 flex items-center justify-center -z-10 animate-device-float">🛠️</span>
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent py-1">
-                  <p className="text-[9px] text-cyan-400 font-bold tracking-widest text-center uppercase">PREMIUM</p>
+                  <p className="text-[9px] text-cyan-400 font-bold tracking-widest text-center uppercase">VERIFIED</p>
                 </div>
               </div>
               <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-slate-950 p-1.5 rounded-full ring-4 ring-slate-900 shadow-md" title="Store Operational Status">
@@ -187,32 +197,42 @@ export default function MobileStoreProfilePage() {
 
             {/* Store Information Overview */}
             <div className="flex-grow">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-status-beacon" />
-                <span>Store Open • Express Line Ready</span>
+                <span>iMobiles Direct Partner • Open Now</span>
               </div>
               
-              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-2.5">
-                iMobiles Smart Care
-                <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2.5 py-0.5 rounded-md border border-cyan-500/30 font-mono tracking-normal align-middle">PRO</span>
+              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white flex flex-wrap items-center justify-center md:justify-start gap-2.5">
+                Karthikeyan
+                <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2.5 py-0.5 rounded-md border border-cyan-500/30 font-mono tracking-normal align-middle">Managing Partner</span>
               </h1>
               
-              <p className="text-slate-400 text-sm md:text-base mt-1.5 max-w-xl leading-relaxed">
-                Premium multi-brand smartphone hardware engineers & original flagship sales direct network. Delivering transparent estimates and surgical hardware replacements.
+              <p className="text-slate-400 text-xs md:text-sm mt-1 max-w-xl leading-relaxed">
+                <strong>iMobiles Premium Store & Smart Care Network.</strong> Direct authorized sales & micro-soldering logic board restorations. Delivering immediate upfront transparent pricing models.
               </p>
 
+              {/* Direct Franchise Communication Lines */}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 mt-3 text-xs font-medium text-slate-300">
+                <span className="text-slate-400 flex items-center gap-1">
+                  📧 <a href="mailto:franchiseimobiles@gmail.com" className="hover:text-cyan-400 underline transition">franchiseimobiles@gmail.com</a>
+                </span>
+                <span className="text-slate-400 flex items-center gap-1">
+                  📸 <a href="https://www.instagram.com/imobiles.india?igsh=YWdzdnliZ2JpY25y" target="_blank" rel="noopener noreferrer" className="hover:text-rose-400 underline transition">@imobiles.india</a>
+                </span>
+              </div>
+
               {/* Verified Trust Tokens */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4 text-xs font-medium text-slate-300">
-                <span className="flex items-center gap-1 bg-slate-950/60 px-2.5 py-1 rounded-md border border-slate-800">
-                  <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                  <strong>4.9/5</strong> Verified Reviews
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-3 text-[11px] font-medium text-slate-300">
+                <span className="flex items-center gap-1 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800">
+                  <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                  <strong>4.9/5</strong> Reviews
                 </span>
-                <span className="flex items-center gap-1 bg-slate-950/60 px-2.5 py-1 rounded-md border border-slate-800">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-                  Grade A+ TrueTone Hardware
+                <span className="flex items-center gap-1 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800">
+                  <CheckCircle2 className="w-3 h-3 text-cyan-400" />
+                  OEM Hardware
                 </span>
-                <span className="flex items-center gap-1 bg-slate-950/60 px-2.5 py-1 rounded-md border border-slate-800">
-                  <Clock className="w-3.5 h-3.5 text-blue-400" />
+                <span className="flex items-center gap-1 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800">
+                  <Clock className="w-3 h-3 text-blue-400" />
                   20-Min Turnaround
                 </span>
               </div>
@@ -221,45 +241,59 @@ export default function MobileStoreProfilePage() {
           </div>
 
           {/* Action Triggers Priority Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8 pt-6 border-t border-slate-800/80">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-8 pt-6 border-t border-slate-800/80">
             
-            {/* Call Dispatch Action Trigger */}
+            {/* Add to Contacts Action Trigger */}
             <a 
-              href="tel:918220370550" 
-              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-cyan-500/20 active:scale-[0.98] transition-all duration-200"
+              href="data:text/vcard;charset=utf-8,BEGIN%3AVCARD%0AVERSION%3A3.0%0AFN%3AKarthikeyan%0AORG%3AiMobiles%0ATITLE%3AManaging%20Partner%0ATEL%3BTYPE%3DWORK%2CVOICE%3A9443383084%0ATEL%3BTYPE%3DHOME%2CVOICE%3A9888644442%0AEMAIL%3Afranchiseimobiles%40gmail.com%0AURL%3Ahttps%3A%2F%2Fwww.instagram.com%2Fimobiles.india%3Figsh%3DYWdzdnliZ2JpY25y%0AEND%3AVCARD" 
+              download="Karthikeyan_iMobiles.vcf"
+              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-3 px-3 rounded-xl shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all duration-200 text-center"
             >
-              <Phone className="w-5 h-5 fill-white/10" />
+              <span className="text-lg">👤</span>
               <div className="text-left leading-tight">
-                <div className="text-xs font-medium text-cyan-100">Direct Store Helpline</div>
-                <div className="text-sm">Call Dispatch Now</div>
+                <div className="text-[10px] font-medium text-emerald-100 uppercase tracking-wider">Save Contact</div>
+                <div className="text-xs sm:text-sm font-black tracking-wide">Add to Contacts</div>
+              </div>
+            </a>
+
+            {/* Download Brochure Action Trigger */}
+            <a 
+              href="/iMobiles_50L_Plan Brochure.pdf" 
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-rose-500 to-orange-600 hover:from-rose-400 hover:to-orange-500 text-white font-bold py-3 px-3 rounded-xl shadow-lg hover:shadow-rose-500/20 active:scale-[0.98] transition-all duration-200 text-center"
+            >
+              <span className="text-lg">📥</span>
+              <div className="text-left leading-tight">
+                <div className="text-[10px] font-medium text-rose-100 uppercase tracking-wider">Official Prospectus</div>
+                <div className="text-xs sm:text-sm font-black tracking-wide">Download Brochure</div>
+              </div>
+            </a>
+
+            {/* Call Primary Dispatch Action Trigger */}
+            <a 
+              href="tel:9443383084" 
+              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 px-3 rounded-xl shadow-lg hover:shadow-cyan-500/20 active:scale-[0.98] transition-all duration-200 text-center"
+            >
+              <Phone className="w-4 h-4 fill-white/10 flex-shrink-0" />
+              <div className="text-left leading-tight">
+                <div className="text-[10px] font-medium text-cyan-100 uppercase tracking-wider">Primary Helpline</div>
+                <div className="text-xs sm:text-sm font-black tracking-wide">9443383084</div>
               </div>
             </a>
 
             {/* WhatsApp Direct Integration Trigger */}
             <a 
-              href="https://wa.me/918220370550?text=Hi%20iMobiles%20Care,%20I%20am%20looking%20for%20an%20instant%20repair%20estimate%20for%20my%20smartphone" 
+              href="https://wa.me/919443383084?text=Hi%20Karthikeyan,%20I%20am%20reaching%20out%20to%20iMobiles%20for%20an%20instant%20service%20inquiry" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:shadow-emerald-600/20 active:scale-[0.98] transition-all duration-200"
+              className="flex items-center justify-center gap-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold py-3 px-3 rounded-xl border border-slate-700 shadow active:scale-[0.98] transition-all duration-200 text-center"
             >
-              <MessageCircle className="w-5 h-5 fill-white/10" />
+              <MessageCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
               <div className="text-left leading-tight">
-                <div className="text-xs font-medium text-emerald-100">Fast Picture Consult</div>
-                <div className="text-sm">WhatsApp Estimate</div>
-              </div>
-            </a>
-
-            {/* Store Navigation Map Trigger */}
-            <a 
-              href="https://maps.google.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold py-3 px-4 rounded-xl border border-slate-700 shadow active:scale-[0.98] transition-all duration-200"
-            >
-              <MapPin className="w-5 h-5 text-rose-400" />
-              <div className="text-left leading-tight">
-                <div className="text-xs font-medium text-slate-400">Offline Location</div>
-                <div className="text-sm">Get Store Map</div>
+                <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">WhatsApp Consult</div>
+                <div className="text-xs sm:text-sm font-bold">Fast Inquiry</div>
               </div>
             </a>
 
@@ -396,7 +430,7 @@ export default function MobileStoreProfilePage() {
                   {/* Booking Trigger Link */}
                   <div className="mt-5 text-center">
                     <a 
-                      href={`https://wa.me/918220370550?text=Lock%20Estimate:%20${selectedDevice}%20(${selectedRepair})%20-%20%E2%82%B9${currentEstimate.price}`}
+                      href={`https://wa.me/919443383084?text=Lock%20Estimate:%20${selectedDevice}%20(${selectedRepair})%20-%20%E2%82%B9${currentEstimate.price}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 font-bold tracking-wide transition group"
@@ -547,7 +581,7 @@ export default function MobileStoreProfilePage() {
                           <div className="text-xl font-black text-white">{product.price}</div>
                         </div>
                         <a 
-                          href={`https://wa.me/918220370550?text=Hold%20Listing:%20${encodeURIComponent(product.name)}`}
+                          href={`https://wa.me/919443383084?text=Hold%20Listing:%20${encodeURIComponent(product.name)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-bold text-xs py-2 px-3.5 rounded-lg transition tracking-wide text-center"
@@ -642,7 +676,7 @@ export default function MobileStoreProfilePage() {
                   </p>
                   <div className="pt-2">
                     <a 
-                      href="tel:918220370550"
+                      href="tel:9443383084"
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-slate-950 font-bold text-xs shadow transition hover:bg-slate-200 active:scale-95"
                     >
                       <Phone className="w-3.5 h-3.5 fill-slate-950" />
