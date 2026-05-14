@@ -95,7 +95,7 @@ export default function RootPublicProfilePage() {
                 prod_description: "Pristine Grade A+ • 100% Battery Health. Apple Care Certified.",
                 prod_type: "Physical",
                 prod_price: 82500,
-                prod_images: ["/gallery/premium_showcase.jpeg"],
+                prod_images: [],
                 prod_url: "https://wa.me/919443383084?text=Inquiry:%20iPhone%2015%20Pro"
             },
             {
@@ -103,7 +103,7 @@ export default function RootPublicProfilePage() {
                 prod_description: "Brand Sealed • 2-Year Direct Replacement Guarantee.",
                 prod_type: "Physical",
                 prod_price: 2499,
-                prod_images: ["/gallery/accessories_rack.jpeg"],
+                prod_images: [],
                 prod_url: "https://wa.me/919443383084?text=Inquiry:%20MagSafe%20Hub"
             }
         ],
@@ -353,25 +353,6 @@ export default function RootPublicProfilePage() {
                         </AccordionItem>
                     ) : null}
 
-                    {/* Services Section */}
-                    {servicesList.length > 0 ? (
-                        <AccordionItem value="services" className="">
-                            <AccordionTrigger className="text-lg font-bold hover:no-underline py-4 cursor-pointer">
-                                <div className="flex items-center gap-2">
-                                    <Wrench className="w-5 h-5 text-gray-600" />
-                                    Services
-                                </div>
-                            </AccordionTrigger>
-                            <AccordionContent>
-                                <ul className="list-disc list-outside ml-4 space-y-1 text-base text-gray-700 dark:text-gray-300 marker:text-gray-400 pb-4">
-                                    {servicesList.map((service: string, i: number) => (
-                                        <li key={i} className="pl-1">{service}</li>
-                                    ))}
-                                </ul>
-                            </AccordionContent>
-                        </AccordionItem>
-                    ) : null}
-
                     {/* Products Section */}
                     {products && products.length > 0 ? (
                         <AccordionItem value="products" className="">
@@ -422,6 +403,25 @@ export default function RootPublicProfilePage() {
                                         );
                                     })}
                                 </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ) : null}
+
+                    {/* Services Section */}
+                    {servicesList.length > 0 ? (
+                        <AccordionItem value="services" className="">
+                            <AccordionTrigger className="text-lg font-bold hover:no-underline py-4 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <Wrench className="w-5 h-5 text-gray-600" />
+                                    Services
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <ul className="list-disc list-outside ml-4 space-y-1 text-base text-gray-700 dark:text-gray-300 marker:text-gray-400 pb-4">
+                                    {servicesList.map((service: string, i: number) => (
+                                        <li key={i} className="pl-1">{service}</li>
+                                    ))}
+                                </ul>
                             </AccordionContent>
                         </AccordionItem>
                     ) : null}
