@@ -81,8 +81,7 @@ export default function RootPublicProfilePage() {
             { id: 2, type_id: 2, soc_link: "https://www.instagram.com/imobiles.india?igsh=YWdzdnliZ2JpY25y" }, // Instagram
         ],
         positions: [
-            { title: "Managing Partner", org: "iMobiles Smart Care Network" },
-            { title: "Secondary Dial Helpline", org: "9888644442" }
+            { title: "Managing Partner", org: "iMobiles Smart Care Network" }
         ],
         services: [
             "🖥️ Grade A+ OLED/Display Assembly Surgical Calibration",
@@ -274,10 +273,19 @@ export default function RootPublicProfilePage() {
                                         </div>
                                     )}
                                     {company_description && (
-                                        <div className="text-base text-gray-700 dark:text-gray-300 leading-relaxed pb-4">
+                                        <div className="text-base text-gray-700 dark:text-gray-300 leading-relaxed pb-3">
                                             <p>{company_description}</p>
                                         </div>
                                     )}
+                                    <div className="flex items-center gap-2 pb-4">
+                                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
+                                            <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: btnColor }} />
+                                            <span className="text-xs text-gray-500 font-medium">Helpline:</span>
+                                            <a href="tel:9888644442" className="text-sm font-bold text-gray-900 dark:text-gray-100 hover:underline">
+                                                9888644442
+                                            </a>
+                                        </div>
+                                    </div>
                                     {company_website && (
                                         <div className="flex gap-4 flex-wrap">
                                             <a
