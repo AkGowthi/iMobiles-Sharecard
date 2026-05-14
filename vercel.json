@@ -1,0 +1,11 @@
+{
+  "framework": null,
+  "routes": [
+    { "src": "/_next/(.*)", "dest": "/_next/$1" },
+    { "src": "/gallery/(.*)", "dest": "/gallery/$1" },
+    { "src": "/uploads/(.*)", "dest": "/uploads/$1" },
+    { "src": "/fonts/(.*)", "dest": "/fonts/$1" },
+    { "src": "/(.*\\.(jpg|jpeg|png|svg|ico|pdf|ai))", "dest": "/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
