@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     },
   },
   turbopack: {}, // Silence Turbopack warning
-  serverExternalPackages: ['sequelize', 'sequelize-typescript'], // Prevent bundling of Sequelize
+  serverExternalPackages: ['sequelize', 'sequelize-typescript', 'mysql2'], // Prevent bundling of Sequelize
   webpack: (config) => {
     config.externals.push({
       'pg-hstore': 'commonjs pg-hstore',
