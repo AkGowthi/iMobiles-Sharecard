@@ -34,3 +34,45 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+---
+
+NODE_ENV='production'
+NEXT_PUBLIC_APP_URL='https://sharecard.co.in'
+
+#Development
+
+# DB_HOST=127.0.0.1
+
+# DB_PORT=3306
+
+# DB_USER=root
+
+# DB_PASSWORD=
+
+# DB_NAME=sharecard
+
+# DB_SYNC=false
+
+# AUTH_SECRET="R09DU1BYLVo1c00wdm9GQWhBekhrVGxiQm82NnFyYVVQNXM="
+
+#Production
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=sharecard
+DB_PASSWORD="Admin@SC!2026"
+DB_NAME="sharecard"
+DB_SYNC=false
+AUTH_SECRET="R09DU1BYLVo1c00wdm9GQWhBekhrVGxiQm82NnFyYVVQNXM="
+
+# NextAuth
+
+AUTH_URL=https://sharecard.co.in
+AUTH_SECRET="R09DU1BYLVo1c00wdm9GQWhBekhrVGxiQm82NnFyYVVQNXM="
+
+# Google OAuth
+
+AUTH_GOOGLE_ID=your_google_id_placeholder.apps.googleusercontent.com
+AUTH_GOOGLE_SECRET=your_google_secret_placeholder
+
+https://calendar.app.google/1pn17ChKrd3ympWp6
