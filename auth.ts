@@ -1,14 +1,32 @@
 import NextAuth from "next-auth"
 import SequelizeAdapter from "@auth/sequelize-adapter"
 import sequelize from "./lib/db"
-import { DataTypes } from "sequelize"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 
 import { syncDatabase } from "@/lib/models" // Import custom models sync function
-import { authConfig } from "./auth.config"
 import type { NextAuthConfig } from "next-auth" // Import NextAuthConfig type
+
+interface SequelizeOverride {
+    tableName?: string;
+    options?: {
+        tableName?: string;
+        freezeTableName?: boolean;
+    };
+    sync?: (_options?: unknown) => Promise<unknown>;
+}
+
+interface DBUserOverride {
+    id: string;
+    email: string;
+    name: string;
+    password?: string;
+    isAdmin?: boolean;
+    is_admin?: boolean;
+    isBanned?: boolean;
+    is_banned?: boolean;
+}
 
 // NextAuth v5 often relies on the Host header if trustHost is true.
 // However, if the production Nginx/Apache reverse proxy does not forward the Host header
@@ -52,8 +70,8 @@ try {
         .then(() => {
             console.log("✅ Database connection verified");
         })
-        .catch((dbError: any) => {
-            console.warn("⚠️ Database connection check failed (will retry on first use):", dbError.message);
+        .catch((dbError: unknown) => {
+            console.warn("⚠️ Database connection check failed (will retry on first use):", (dbError as Error).message);
         });
 
     // Update the adapter's models to use the correct table names from our schema
@@ -64,51 +82,61 @@ try {
     const VerificationTokenModel = sequelize.models.VerificationToken || sequelize.models.verificationToken;
 
     if (UserModel) {
-        (UserModel as any).tableName = 'Users';
-        (UserModel as any).options.tableName = 'Users';
-        (UserModel as any).options.freezeTableName = true;
-
+        const u = UserModel as unknown as SequelizeOverride;
+        u.tableName = 'Users';
+        if (u.options) {
+            u.options.tableName = 'Users';
+            u.options.freezeTableName = true;
+        }
     }
 
     if (AccountModel) {
-        (AccountModel as any).tableName = 'Accounts';
-        (AccountModel as any).options.tableName = 'Accounts';
-        (AccountModel as any).options.freezeTableName = true;
+        const a = AccountModel as unknown as SequelizeOverride;
+        a.tableName = 'Accounts';
+        if (a.options) {
+            a.options.tableName = 'Accounts';
+            a.options.freezeTableName = true;
+        }
     }
 
     if (SessionModel) {
-        (SessionModel as any).tableName = 'Sessions';
-        (SessionModel as any).options.tableName = 'Sessions';
-        (SessionModel as any).options.freezeTableName = true;
+        const s = SessionModel as unknown as SequelizeOverride;
+        s.tableName = 'Sessions';
+        if (s.options) {
+            s.options.tableName = 'Sessions';
+            s.options.freezeTableName = true;
+        }
     }
 
     if (VerificationTokenModel) {
-        (VerificationTokenModel as any).tableName = 'VerificationTokens';
-        (VerificationTokenModel as any).options.tableName = 'VerificationTokens';
-        (VerificationTokenModel as any).options.freezeTableName = true;
+        const v = VerificationTokenModel as unknown as SequelizeOverride;
+        v.tableName = 'VerificationTokens';
+        if (v.options) {
+            v.options.tableName = 'VerificationTokens';
+            v.options.freezeTableName = true;
+        }
     }
 
     // Override sync methods to prevent syncing tables that already exist
     [UserModel, AccountModel, SessionModel, VerificationTokenModel].forEach(model => {
         if (model) {
-            (model as any).sync = async function (options?: any) {
+            const m = model as unknown as SequelizeOverride;
+            m.sync = async function (_options?: unknown) {
                 // Tables already exist from schema.sql, skip syncing
                 return this;
             };
         }
     });
-} catch (error: any) {
-    console.error("❌ Failed to initialize NextAuth adapter:", error);
+} catch (error: unknown) {
+    const err = error as Error;
+    console.error("❌ Failed to initialize NextAuth adapter:", err);
     console.error("Error details:", {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
+        message: err.message,
+        stack: err.stack,
+        name: err.name
     });
-    throw new Error(`NextAuth adapter initialization failed: ${error.message}`);
+    throw new Error(`NextAuth adapter initialization failed: ${err.message}`);
 }
-
-// Get the User model for use in callbacks
-const UserModel = sequelize.models.User || sequelize.models.user;
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter,
@@ -131,12 +159,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 try {
                     if (!credentials?.username || !credentials?.password) return null;
 
-                    const UserModel = sequelize.models.User || sequelize.models.user;
-                    if (!UserModel) return null;
+                    const LocalUserModel = sequelize.models.User || sequelize.models.user;
+                    if (!LocalUserModel) return null;
 
-                    const dbUser = await UserModel.findOne({
+                    const dbUser = await LocalUserModel.findOne({
                         where: { email: credentials.username as string }
-                    }) as any;
+                    }) as unknown as DBUserOverride | null;
 
                     if (!dbUser || !dbUser.password) {
                         return null;
@@ -238,7 +266,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     console.log("NextAuth Redirect: Allowed Origin ->", url);
                     return url;
                 }
-            } catch (e) {
+            } catch (_e) {
                 console.error("NextAuth Redirect: Invalid URL ->", url);
             }
 
@@ -247,21 +275,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         async signIn({ user }) {
             try {
-                if (!user.email) return true; // Should ideally check, but for now allow strict email checks later or assume provider is good.
+                if (!user.email) return true;
 
                 // Direct DB check for most up-to-date status
-                const UserModel = sequelize.models.User || sequelize.models.user;
-                if (!UserModel) {
+                const LocalUserModel = sequelize.models.User || sequelize.models.user;
+                if (!LocalUserModel) {
                     console.warn("User model not found in signIn callback");
                     return true;
                 }
 
-                const dbUser = await UserModel.findOne({
+                const dbUser = await LocalUserModel.findOne({
                     where: { email: user.email }
-                }) as any;
+                }) as unknown as DBUserOverride | null;
 
-                // Access is_banned column (adapter uses snake_case in DB, camelCase in model)
-                // Try both naming conventions to be safe
                 if (dbUser && (dbUser.isBanned || dbUser.is_banned)) {
                     return "/banned"; // Redirect to banned page
                 }
@@ -269,46 +295,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 return true;
             } catch (error) {
                 console.error("Error checking ban status:", error);
-                return true; // Fail open or closed? Fail open to avoid lockouts on error? Better fail open for now or investigate.
+                return true;
             }
         },
         async jwt({ token, user }) {
+            const t = token as unknown as { id?: string; isAdmin?: boolean; isBanned?: boolean; sub?: string; };
             // When user first signs in, pass properties to token
             if (user) {
-                token.id = user.id;
-                token.isAdmin = (user as any).isAdmin;
+                t.id = user.id;
+                t.isAdmin = (user as unknown as { isAdmin?: boolean }).isAdmin;
             }
 
-            if (token.sub) {
+            if (t.sub) {
                 try {
-                    const UserModel = sequelize.models.User || sequelize.models.user;
-                    if (!UserModel) return token;
+                    const LocalUserModel = sequelize.models.User || sequelize.models.user;
+                    if (!LocalUserModel) return token;
 
-                    const dbUser = await UserModel.findByPk(token.sub) as any;
-                    // Access is_banned column (adapter uses snake_case in DB, camelCase in model)
+                    const dbUser = await LocalUserModel.findByPk(t.sub) as unknown as DBUserOverride | null;
                     if (dbUser && (dbUser.isBanned || dbUser.is_banned)) {
-                        token.isBanned = true;
+                        t.isBanned = true;
                     }
                     if (dbUser && (dbUser.isAdmin || dbUser.is_admin)) {
-                        token.isAdmin = true;
+                        t.isAdmin = true;
                     }
-                } catch (e) {
-                    console.error("Error in jwt database check", e);
+                } catch (_e) {
+                    console.error("Error in jwt database check", _e);
                 }
             }
             return token;
         },
         async session({ session, token }) {
-            if (token.isBanned) {
+            const tOverride = token as unknown as { isBanned?: boolean; sub?: string; id?: string; isAdmin?: boolean };
+            if (tOverride.isBanned) {
                 // If user is banned, invalidate session. 
-                return {} as any;
+                return {} as unknown as typeof session;
             }
             if (session.user) {
-                if (token.sub) session.user.id = token.sub;
-                if (token.id) session.user.id = token.id as string;
-                (session.user as any).isAdmin = token.isAdmin || false;
+                if (tOverride.sub) session.user.id = tOverride.sub;
+                if (tOverride.id) session.user.id = tOverride.id;
+                const uOverride = session.user as unknown as { isAdmin?: boolean };
+                uOverride.isAdmin = tOverride.isAdmin || false;
             }
             return session;
         }
     }
-} satisfies NextAuthConfig) // Add 'satisfies NextAuthConfig' to ensure proper typing
+} satisfies NextAuthConfig)
