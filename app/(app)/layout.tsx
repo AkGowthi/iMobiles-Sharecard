@@ -8,12 +8,8 @@ export default function AppLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <>
-            <Suspense fallback={null}>
-                <Navbar />
-            </Suspense>
-            <main className="flex-grow">{children}</main>
-            <Footer />
-        </>
+        <main className="flex-grow w-full bg-slate-950 text-slate-100 min-h-screen">
+            {children}
+        </main>
     );
 }
