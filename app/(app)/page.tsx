@@ -1,763 +1,413 @@
-"use client";
-
-import React, { useState } from "react";
-import { 
-  Phone, 
-  MessageCircle, 
-  MapPin, 
-  Wrench, 
-  ShoppingBag, 
-  Star, 
-  ShieldCheck, 
-  CheckCircle2, 
-  Sparkles, 
-  Smartphone, 
-  BatteryCharging,
-  Cpu,
-  ChevronRight,
-  Clock,
-  Image as ImageIcon
-} from "lucide-react";
+import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { Mail, MapPin, Phone, Briefcase, Instagram, Linkedin, Youtube, Facebook, Globe, Link as LinkIcon, Building2, Wrench, Package, Image as ImageIcon, ExternalLink, Eye } from "lucide-react";
+import { FaWhatsapp, FaBehance, FaXTwitter } from "react-icons/fa6";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-export default function MobileStoreProfilePage() {
-  // Navigation tabs state
-  const [activeTab, setActiveTab] = useState<"repairs" | "showcase" | "guarantee" | "gallery">("repairs");
+import { AddToContactsButton } from "@/components/features/public-profile/add-to-contacts-button";
+import { ExchangeContactModal } from "@/components/features/public-profile/exchange-contact-modal";
+import { BookingModal } from "@/components/features/public-profile/booking-modal";
 
-  // Interactive Live Estimator State
-  const [selectedDevice, setSelectedDevice] = useState<string>("iPhone 15 Pro Max");
-  const [selectedRepair, setSelectedRepair] = useState<string>("oled");
+export default function RootPublicProfilePage() {
+    // Static Pre-populated Profile matching ShareCard db spec for completely backend-less static deployment
+    const profile: any = {
+        id: 1,
+        f_name: "Karthikeyan",
+        l_name: "",
+        profession: "Managing Partner",
+        company_name: "iMobiles Premium Care",
+        company_description: "Premium multi-brand smartphone hardware engineers & original flagship sales direct network. Delivering upfront transparent estimates and certified surgical logic board hardware replacements.",
+        company_website: "https://www.instagram.com/imobiles.india?igsh=YWdzdnliZ2JpY25y",
+        bio: "Authorized direct delivery setup handling liquid diagnostic protocols and micro-chip spares.",
+        address: "iMobiles Smart Care Center",
+        map_url: "https://maps.google.com",
+        email: "franchiseimobiles@gmail.com",
+        phone_no: "9443383084",
+        userImage: "/karthikeyan_dp.jpg",
+        business_logo: "", 
+        socialHandles: [
+            { id: 1, type_id: 1, soc_link: "9443383084" }, // Whatsapp
+            { id: 2, type_id: 2, soc_link: "https://www.instagram.com/imobiles.india?igsh=YWdzdnliZ2JpY25y" }, // Instagram
+        ],
+        positions: [
+            { title: "Managing Partner", org: "iMobiles Smart Care Network" },
+            { title: "Secondary Dial Helpline", org: "9888644442" }
+        ],
+        services: [
+            "🖥️ Grade A+ OLED/Display Assembly Surgical Calibration",
+            "🔋 Certified OEM Cell Replacement (100% Core Health)",
+            "💎 Laser Back Cover Glass Restoration Protocol",
+            "🌊 Deep Ultrasonic Liquid Recovery & Medical Data Rescue"
+        ],
+        products: [
+            {
+                prod_name: "iPhone 15 Pro (256GB) - Natural Titanium",
+                prod_description: "Pristine Grade A+ • 100% Battery Health. Apple Care Certified.",
+                prod_type: "Physical",
+                prod_price: 82500,
+                prod_images: ["/gallery/premium_showcase.jpeg"],
+                prod_url: "https://wa.me/919443383084?text=Inquiry:%20iPhone%2015%20Pro"
+            },
+            {
+                prod_name: "iMobiles MagSafe Armor Hub (15W)",
+                prod_description: "Brand Sealed • 2-Year Direct Replacement Guarantee.",
+                prod_type: "Physical",
+                prod_price: 2499,
+                prod_images: ["/gallery/accessories_rack.jpeg"],
+                prod_url: "https://wa.me/919443383084?text=Inquiry:%20MagSafe%20Hub"
+            }
+        ],
+        gallery: [
+            { image_url: "/gallery/store_front.jpeg" },
+            { image_url: "/gallery/interior_view.jpeg" },
+            { image_url: "/gallery/service_center.jpeg" },
+            { image_url: "/gallery/premium_showcase.jpeg" },
+            { image_url: "/gallery/accessories_rack.jpeg" },
+            { image_url: "/gallery/client_lounge.jpeg" }
+        ],
+        brochure: "/iMobiles_50L_Plan Brochure.pdf",
+        theme_color: "#FFFFFF",
+        button_color: "#1B54E0",
+        card_layout: "accordion",
+        booking_url: ""
+    };
 
-  // Pricing Matrix Database Simulation
-  const pricingMatrix: Record<string, Record<string, { price: number; eta: string; originalPrice: number }>> = {
-    "iPhone 15 Pro Max": {
-      oled: { price: 18500, originalPrice: 24000, eta: "20 Mins" },
-      battery: { price: 4800, originalPrice: 6500, eta: "15 Mins" },
-      glass: { price: 6500, originalPrice: 9000, eta: "30 Mins" },
-      water: { price: 3500, originalPrice: 5000, eta: "45 Mins" }
-    },
-    "iPhone 14 Pro": {
-      oled: { price: 14500, originalPrice: 19500, eta: "20 Mins" },
-      battery: { price: 4200, originalPrice: 5800, eta: "15 Mins" },
-      glass: { price: 5500, originalPrice: 7500, eta: "30 Mins" },
-      water: { price: 3000, originalPrice: 4500, eta: "45 Mins" }
-    },
-    "Samsung Galaxy S24 Ultra": {
-      oled: { price: 21000, originalPrice: 27500, eta: "25 Mins" },
-      battery: { price: 5200, originalPrice: 7000, eta: "20 Mins" },
-      glass: { price: 7500, originalPrice: 11000, eta: "35 Mins" },
-      water: { price: 4000, originalPrice: 6000, eta: "45 Mins" }
-    },
-    "OnePlus 12 Flagship": {
-      oled: { price: 12500, originalPrice: 16500, eta: "20 Mins" },
-      battery: { price: 3800, originalPrice: 5000, eta: "15 Mins" },
-      glass: { price: 4500, originalPrice: 6500, eta: "25 Mins" },
-      water: { price: 2800, originalPrice: 4000, eta: "40 Mins" }
-    }
-  };
+    const { id, f_name, l_name, profession, company_name, company_description, company_website, map_url, email, phone_no, userImage, business_logo, socialHandles, products, gallery, services, brochure, theme_color, button_color, booking_url } = profile;
+    const fullName = `${f_name}`.trim();
 
-  const currentEstimate = pricingMatrix[selectedDevice]?.[selectedRepair] || { price: 0, originalPrice: 0, eta: "N/A" };
+    // Default colors
+    const bgTheme = theme_color || "#FFFFFF";
+    const btnColor = button_color || "#1B54E0";
 
-  // Showcase Products Database Simulation
-  const showcaseProducts = [
-    {
-      id: 1,
-      name: "iPhone 15 Pro (256GB) - Natural Titanium",
-      type: "Certified Pre-Owned Flagship",
-      condition: "Pristine Grade A+ • 100% Battery",
-      price: "₹82,500",
-      savings: "Save ₹45,400 vs New",
-      imageTag: "📱",
-      badge: "Best Seller",
-      specs: ["A17 Pro Chip", "Action Button Enabled", "Apple Care Certified"]
-    },
-    {
-      id: 2,
-      name: "iMobiles MagSafe Armor Hub (15W Fast Wireless)",
-      type: "Premium Accessories Collection",
-      condition: "Brand Sealed • 2-Year Direct Replacement",
-      price: "₹2,499",
-      savings: "50% Launch Discount",
-      imageTag: "⚡",
-      badge: "MagSafe Certified",
-      specs: ["Strong Magnetic Lock", "Multi-Device Safety Sensor", "Braided Core Line"]
-    },
-    {
-      id: 3,
-      name: "Military-Grade Kevlar Drop Shell Case",
-      type: "Heavy Duty Device Defense",
-      condition: "Precision Cutouts • Raised Camera Bezel",
-      price: "₹1,299",
-      savings: "Includes Free High-Alumina Temper",
-      imageTag: "🛡️",
-      badge: "Drop Tested",
-      specs: ["Shockproof Air Cushion", "Anti-Yellowing UV Coat", "Tactile CNC Keys"]
-    }
-  ];
+    const servicesList: string[] = profile.services || [];
+    const positionsList: any[] = profile.positions || [];
 
-  // Testimonials Array Simulation
-  const testimonials = [
-    {
-      name: "Ravi Shankar",
-      service: "iPhone 15 Pro Max Screen Replacement",
-      rating: 5,
-      date: "Yesterday",
-      comment: "Absolutely mesmerizing speed! Dropped my phone at 10:15 AM, and by 10:35 AM the new OLED display was fully calibrated with TrueTone intact. Premium genuine parts at transparent costs."
-    },
-    {
-      name: "Priyanka Desai",
-      service: "Samsung S24 Ultra Battery Restore",
-      rating: 5,
-      date: "3 days ago",
-      comment: "The live estimate calculator exactly matched the final invoice. No hidden service charges, fully certified OEM cells. My battery life is back to original factory stamina!"
-    },
-    {
-      name: "Dr. Karthik Rajan",
-      service: "Ultrasonic Water Recovery Protocol",
-      rating: 5,
-      date: "Last week",
-      comment: "My phone fell into salt water and died instantly. iMobiles logic board team performed deep ultrasonic recovery and saved all my critical hospital medical logs. Truly life savers!"
-    }
-  ];
+    return (
+        <div className="min-h-screen flex justify-center font-sans text-gray-900 dark:text-gray-100" style={{ backgroundColor: bgTheme }}>
+            <div className="w-full max-w-md min-h-screen relative pb-4 transition-colors duration-300" style={{ backgroundColor: bgTheme }}>
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans relative overflow-x-hidden selection:bg-cyan-500 selection:text-white pb-24">
-      {/* Dynamic Embedded Styling Token System */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes subtlePulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.08); opacity: 0.85; }
-        }
-        @keyframes floatEffect {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-6px); }
-        }
-        .animate-status-beacon {
-          animation: subtlePulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        .animate-device-float {
-          animation: floatEffect 5s ease-in-out infinite;
-        }
-        /* Custom styled smooth scrollbars */
-        ::-webkit-scrollbar {
-          width: 6px;
-          height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-          background: #020617;
-        }
-        ::-webkit-scrollbar-thumb {
-          background: #1e293b;
-          border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background: #334155;
-        }
-      `}} />
-
-      {/* Decorative Background Gradients Layer */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[650px] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/20 via-slate-950/60 to-slate-950 pointer-events-none z-0" />
-      <div className="absolute top-1/3 -left-48 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="absolute top-2/3 -right-48 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none z-0" />
-
-      {/* Top Banner Notice */}
-      <div className="relative z-10 bg-gradient-to-r from-cyan-600/20 via-blue-600/20 to-cyan-600/20 border-b border-cyan-500/20 py-2.5 px-4 text-center text-xs md:text-sm font-medium tracking-wide text-cyan-300 backdrop-blur-md flex items-center justify-center gap-2">
-        <span className="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-        <span>⚡ <strong>Special Client Offer:</strong> Free High-Alumina Tempered Glass Protection with every screen repair booked today</span>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10">
-        {/* Profile Card Main Container */}
-        <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 md:p-8 shadow-2xl relative">
-          
-          {/* Header Profile Identity */}
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
-            
-            {/* Store Dynamic Avatar Wrapper */}
-            <div className="relative group flex-shrink-0">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-500 animate-status-beacon" />
-              <div className="relative w-28 h-28 md:w-32 md:h-32 bg-slate-950 rounded-2xl flex items-center justify-center border-2 border-slate-800 overflow-hidden shadow-inner">
-                {/* Client Real DP Image */}
-                <Image 
-                  src="/karthikeyan_dp.jpg" 
-                  alt="Karthikeyan - Managing Partner" 
-                  width={140}
-                  height={140}
-                  className="w-full h-full object-cover object-top"
-                  priority
-                />
-                <span className="text-4xl md:text-5xl select-none absolute inset-0 flex items-center justify-center -z-10 animate-device-float">🛠️</span>
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent py-1">
-                  <p className="text-[9px] text-cyan-400 font-bold tracking-widest text-center uppercase">VERIFIED</p>
-                </div>
-              </div>
-              <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-slate-950 p-1.5 rounded-full ring-4 ring-slate-900 shadow-md" title="Store Operational Status">
-                <ShieldCheck className="w-4 h-4 stroke-[3]" />
-              </div>
-            </div>
-
-            {/* Store Information Overview */}
-            <div className="flex-grow">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-status-beacon" />
-                <span>iMobiles Direct Partner • Open Now</span>
-              </div>
-              
-              <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-white flex flex-wrap items-center justify-center md:justify-start gap-2.5">
-                Karthikeyan
-                <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2.5 py-0.5 rounded-md border border-cyan-500/30 font-mono tracking-normal align-middle">Managing Partner</span>
-              </h1>
-              
-              <p className="text-slate-400 text-xs md:text-sm mt-1 max-w-xl leading-relaxed">
-                <strong>iMobiles Premium Store & Smart Care Network.</strong> Direct authorized sales & micro-soldering logic board restorations. Delivering immediate upfront transparent pricing models.
-              </p>
-
-              {/* Direct Franchise Communication Lines */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 mt-3 text-xs font-medium text-slate-300">
-                <span className="text-slate-400 flex items-center gap-1">
-                  📧 <a href="mailto:franchiseimobiles@gmail.com" className="hover:text-cyan-400 underline transition">franchiseimobiles@gmail.com</a>
-                </span>
-                <span className="text-slate-400 flex items-center gap-1">
-                  📸 <a href="https://www.instagram.com/imobiles.india?igsh=YWdzdnliZ2JpY25y" target="_blank" rel="noopener noreferrer" className="hover:text-rose-400 underline transition">@imobiles.india</a>
-                </span>
-              </div>
-
-              {/* Verified Trust Tokens */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-3 text-[11px] font-medium text-slate-300">
-                <span className="flex items-center gap-1 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800">
-                  <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                  <strong>4.9/5</strong> Reviews
-                </span>
-                <span className="flex items-center gap-1 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800">
-                  <CheckCircle2 className="w-3 h-3 text-cyan-400" />
-                  OEM Hardware
-                </span>
-                <span className="flex items-center gap-1 bg-slate-950/60 px-2 py-0.5 rounded border border-slate-800">
-                  <Clock className="w-3 h-3 text-blue-400" />
-                  20-Min Turnaround
-                </span>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Action Triggers Priority Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-8 pt-6 border-t border-slate-800/80">
-            
-            {/* Add to Contacts Action Trigger */}
-            <a 
-              href="data:text/vcard;charset=utf-8,BEGIN%3AVCARD%0AVERSION%3A3.0%0AFN%3AKarthikeyan%0AORG%3AiMobiles%0ATITLE%3AManaging%20Partner%0ATEL%3BTYPE%3DWORK%2CVOICE%3A9443383084%0ATEL%3BTYPE%3DHOME%2CVOICE%3A9888644442%0AEMAIL%3Afranchiseimobiles%40gmail.com%0AURL%3Ahttps%3A%2F%2Fwww.instagram.com%2Fimobiles.india%3Figsh%3DYWdzdnliZ2JpY25y%0AEND%3AVCARD" 
-              download="Karthikeyan_iMobiles.vcf"
-              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-3 px-3 rounded-xl shadow-lg hover:shadow-emerald-500/20 active:scale-[0.98] transition-all duration-200 text-center"
-            >
-              <span className="text-lg">👤</span>
-              <div className="text-left leading-tight">
-                <div className="text-[10px] font-medium text-emerald-100 uppercase tracking-wider">Save Contact</div>
-                <div className="text-xs sm:text-sm font-black tracking-wide">Add to Contacts</div>
-              </div>
-            </a>
-
-            {/* Download Brochure Action Trigger */}
-            <a 
-              href="/iMobiles_50L_Plan Brochure.pdf" 
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-rose-500 to-orange-600 hover:from-rose-400 hover:to-orange-500 text-white font-bold py-3 px-3 rounded-xl shadow-lg hover:shadow-rose-500/20 active:scale-[0.98] transition-all duration-200 text-center"
-            >
-              <span className="text-lg">📥</span>
-              <div className="text-left leading-tight">
-                <div className="text-[10px] font-medium text-rose-100 uppercase tracking-wider">Official Prospectus</div>
-                <div className="text-xs sm:text-sm font-black tracking-wide">Download Brochure</div>
-              </div>
-            </a>
-
-            {/* Call Primary Dispatch Action Trigger */}
-            <a 
-              href="tel:9443383084" 
-              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 px-3 rounded-xl shadow-lg hover:shadow-cyan-500/20 active:scale-[0.98] transition-all duration-200 text-center"
-            >
-              <Phone className="w-4 h-4 fill-white/10 flex-shrink-0" />
-              <div className="text-left leading-tight">
-                <div className="text-[10px] font-medium text-cyan-100 uppercase tracking-wider">Primary Helpline</div>
-                <div className="text-xs sm:text-sm font-black tracking-wide">9443383084</div>
-              </div>
-            </a>
-
-            {/* WhatsApp Direct Integration Trigger */}
-            <a 
-              href="https://wa.me/919443383084?text=Hi%20Karthikeyan,%20I%20am%20reaching%20out%20to%20iMobiles%20for%20an%20instant%20service%20inquiry" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold py-3 px-3 rounded-xl border border-slate-700 shadow active:scale-[0.98] transition-all duration-200 text-center"
-            >
-              <MessageCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <div className="text-left leading-tight">
-                <div className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">WhatsApp Consult</div>
-                <div className="text-xs sm:text-sm font-bold">Fast Inquiry</div>
-              </div>
-            </a>
-
-          </div>
-
-        </div>
-
-        {/* Dynamic Nav Switcher Tabs Container */}
-        <div className="mt-8">
-          
-          {/* iOS-Style Pill Switcher */}
-          <div className="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-800 max-w-xl mx-auto shadow-inner">
-            <button
-              onClick={() => setActiveTab("repairs")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "repairs" 
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md" 
-                : "text-slate-400 hover:text-slate-200"}`}
-            >
-              <Wrench className="w-4 h-4" />
-              <span>Instant Repairs</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("showcase")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "showcase" 
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md" 
-                : "text-slate-400 hover:text-slate-200"}`}
-            >
-              <ShoppingBag className="w-4 h-4" />
-              <span>Devices & Gears</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("guarantee")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "guarantee" 
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md" 
-                : "text-slate-400 hover:text-slate-200"}`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Quality</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("gallery")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "gallery" 
-                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md" 
-                : "text-slate-400 hover:text-slate-200"}`}
-            >
-              <ImageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>Gallery</span>
-            </button>
-          </div>
-
-          {/* Interactive Views Rendering Container */}
-          <div className="mt-6">
-            
-            {/* TAB 1: INSTANT REPAIRS & ESTIMATOR */}
-            {activeTab === "repairs" && (
-              <div className="space-y-6 animate-fadeIn">
-                
-                {/* Immersive Live Estimator Module */}
-                <div className="bg-slate-900 border border-cyan-500/30 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-cyan-500/10 text-cyan-400 text-[10px] font-mono px-3 py-1 rounded-bl-xl border-l border-b border-cyan-500/20 font-bold uppercase tracking-wider">
-                    Client Interactive Tool
-                  </div>
-
-                  <div className="flex items-center gap-2 mb-4">
-                    <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
-                    <h3 className="text-lg font-bold text-white tracking-tight">Live Hardware Cost Estimator</h3>
-                  </div>
-
-                  <p className="text-xs text-slate-400 mb-6">
-                    Select your flagship device and required hardware diagnostic layer below. Pricing automatically incorporates genuine factory parts and real-time technician bench setups.
-                  </p>
-
-                  {/* Device and Repair Selector Controls Matrix */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    {/* Device Choice Select */}
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wide">
-                        1. Target Flagship Model
-                      </label>
-                      <select 
-                        value={selectedDevice} 
-                        onChange={(e) => setSelectedDevice(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-sm text-slate-100 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition cursor-pointer"
-                      >
-                        {Object.keys(pricingMatrix).map((device) => (
-                          <option key={device} value={device}>{device}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Repair Choice Select */}
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wide">
-                        2. Certified Hardware Repair Line
-                      </label>
-                      <select 
-                        value={selectedRepair} 
-                        onChange={(e) => setSelectedRepair(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-sm text-slate-100 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition cursor-pointer"
-                      >
-                        <option value="oled">🖥️ Grade A+ OLED/Display Assembly</option>
-                        <option value="battery">🔋 OEM Cell Replacement (100% Core)</option>
-                        <option value="glass">💎 Back Cover Laser Glass Restoration</option>
-                        <option value="water">🌊 Deep Ultrasonic Liquid Recovery</option>
-                      </select>
-                    </div>
-
-                  </div>
-
-                  {/* Result Live Banner Matrix */}
-                  <div className="mt-6 p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    
-                    <div className="text-center sm:text-left">
-                      <div className="text-xs text-slate-400 font-medium">Estimated Guaranteed Upfront Invoice</div>
-                      <div className="flex items-baseline justify-center sm:justify-start gap-2 mt-1">
-                        <span className="text-2xl md:text-3xl font-black text-cyan-400">
-                          ₹{currentEstimate.price.toLocaleString()}
+                {/* Top Header without edit mode triggers */}
+                <div className="h-16 flex items-center justify-between sticky top-0 bg-opacity-80 backdrop-blur-md px-5 z-50 transition-colors duration-300" style={{ backgroundColor: bgTheme === '#FFFFFF' ? 'rgba(255,255,255,0.8)' : bgTheme }}>
+                    <div className="flex items-center gap-2">
+                        <span className="font-bold text-xl text-gray-900 dark:text-gray-100 cursor-default">
+                            ShareCard
                         </span>
-                        <span className="text-xs text-slate-500 line-through">
-                          ₹{currentEstimate.originalPrice.toLocaleString()}
-                        </span>
-                        <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-semibold">
-                          Parts Included
-                        </span>
-                      </div>
                     </div>
-
-                    <div className="h-px sm:h-10 w-full sm:w-px bg-slate-800" />
-
-                    <div className="flex items-center gap-3">
-                      <div className="bg-blue-500/10 p-2.5 rounded-lg border border-blue-500/20 text-blue-400">
-                        <Clock className="w-5 h-5" />
-                      </div>
-                      <div className="text-left">
-                        <div className="text-xs text-slate-400 font-medium">Turnaround Speed</div>
-                        <div className="text-sm font-bold text-white tracking-wide">{currentEstimate.eta} Express Dispatch</div>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* Booking Trigger Link */}
-                  <div className="mt-5 text-center">
-                    <a 
-                      href={`https://wa.me/919443383084?text=Lock%20Estimate:%20${selectedDevice}%20(${selectedRepair})%20-%20%E2%82%B9${currentEstimate.price}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 font-bold tracking-wide transition group"
-                    >
-                      <span>Lock this dynamic setup direct via secure chat dispatch</span>
-                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </a>
-                  </div>
-
                 </div>
 
-                {/* Grid Overview of Primary Tier Services */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  
-                  {/* Service Item 1 */}
-                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
-                    <div className="flex items-start justify-between">
-                      <div className="bg-slate-950 p-2.5 rounded-xl text-cyan-400 border border-slate-800">
-                        <Smartphone className="w-5 h-5" />
-                      </div>
-                      <span className="text-xs font-mono bg-cyan-950 text-cyan-400 border border-cyan-800/50 px-2 py-0.5 rounded">
-                        TrueTone Transfer
-                      </span>
-                    </div>
-                    <h4 className="text-base font-bold text-white mt-3">Display Assembly Calibrations</h4>
-                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Surgical multi-layer hardware switch protecting touch responsive sensors, biometrics, and active TrueTone IC protocols seamlessly.
-                    </p>
-                    <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
-                      <span>Lifetime Touch Coverage</span>
-                      <strong className="text-white">From ₹4,500</strong>
-                    </div>
-                  </div>
-
-                  {/* Service Item 2 */}
-                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
-                    <div className="flex items-start justify-between">
-                      <div className="bg-slate-950 p-2.5 rounded-xl text-blue-400 border border-slate-800">
-                        <BatteryCharging className="w-5 h-5" />
-                      </div>
-                      <span className="text-xs font-mono bg-blue-950 text-blue-400 border border-blue-800/50 px-2 py-0.5 rounded">
-                        100% Certified Core
-                      </span>
-                    </div>
-                    <h4 className="text-base font-bold text-white mt-3">High-Density Battery Restorations</h4>
-                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Replacement of depleted single and dual configuration polymer packs restoring optimal system processing throttle and multi-day standby duration.
-                    </p>
-                    <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
-                      <span>Includes Waterproof Seal</span>
-                      <strong className="text-white">From ₹2,800</strong>
-                    </div>
-                  </div>
-
-                  {/* Service Item 3 */}
-                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
-                    <div className="flex items-start justify-between">
-                      <div className="bg-slate-950 p-2.5 rounded-xl text-emerald-400 border border-slate-800">
-                        <Cpu className="w-5 h-5" />
-                      </div>
-                      <span className="text-xs font-mono bg-emerald-950 text-emerald-400 border border-emerald-800/50 px-2 py-0.5 rounded">
-                        Micro-Soldering
-                      </span>
-                    </div>
-                    <h4 className="text-base font-bold text-white mt-3">Logic Board Level Recovery</h4>
-                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Advanced short circuit trace repairs, charging control PMIC adjustments, and internal data continuity mapping via precise heat tools.
-                    </p>
-                    <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
-                      <span>No Fix, Zero Cost Strategy</span>
-                      <strong className="text-white">Upon Diagnostic</strong>
-                    </div>
-                  </div>
-
-                  {/* Service Item 4 */}
-                  <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-start justify-between">
-                        <div className="bg-slate-950 p-2.5 rounded-xl text-rose-400 border border-slate-800">
-                          <Wrench className="w-5 h-5" />
+                {/* Profile Section */}
+                <div className="mt-4 px-5">
+                    <div className="flex justify-between items-start gap-2 mb-4">
+                        {/* Left: User Image */}
+                        <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200 dark:border-zinc-800">
+                            {userImage ? (
+                                <Image src={userImage} alt={fullName} width={96} height={96} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-3xl font-bold">
+                                    {f_name?.[0]}
+                                </div>
+                            )}
                         </div>
-                        <span className="text-xs font-mono bg-rose-950 text-rose-400 border border-rose-800/50 px-2 py-0.5 rounded">
-                          Urgent Priority
-                        </span>
-                      </div>
-                      <h4 className="text-base font-bold text-white mt-3">Laser Back-Panel Replacements</h4>
-                      <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                        Precision CNC guided rear crystal disassembly perfectly protecting underlying wireless inductive rings and rear sensor lenses.
-                      </p>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-400">
-                      <span>Original Factory Match</span>
-                      <strong className="text-white">From ₹3,500</strong>
-                    </div>
-                  </div>
 
-                </div>
+                    <h1 className="text-2xl font-bold my-1">{fullName}</h1>
+                    {profession && <p className="text-gray-600 dark:text-gray-400 text-base font-medium pb-1">{profession}</p>}
+                    {company_name && <p className="text-gray-500 dark:text-gray-500 text-sm">{company_name}</p>}
 
-              </div>
-            )}
+                    {/* Contact & Social Icons Row decoupled from server analytics actions */}
+                    {(phone_no || email || (socialHandles && socialHandles.length > 0)) && (
+                        <div className="flex flex-nowrap gap-2 mt-4 mb-6 overflow-x-auto pb-2 brand-scrollbar">
+                            {/* Phone Icon */}
+                            {phone_no && (
+                                <a
+                                    href={`tel:${phone_no}`}
+                                    className="w-14 h-14 rounded-full border border-gray-500 dark:border-zinc-800 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all shrink-0 cursor-pointer"
+                                >
+                                    <Phone className="w-6 h-6" style={{ color: btnColor }} />
+                                </a>
+                            )}
 
+                            {/* Social Icons */}
+                            {socialHandles && socialHandles.length > 0 && socialHandles.map((handle: any) => {
+                                const typeId = Number(handle.type_id);
+                                let icon = <LinkIcon className="w-6 h-6" style={{ color: btnColor }} />;
+                                let href = handle.soc_link;
 
-            {/* TAB 2: CERTIFIED SHOWCASE PRODUCTS */}
-            {activeTab === "showcase" && (
-              <div className="space-y-4 animate-fadeIn">
-                <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
-                  <span>🛍️ Displaying original inspected units & extreme armor accessories directly available for physical audit</span>
-                  <span className="font-semibold text-slate-300">3 Verified Listings</span>
-                </div>
+                                switch (typeId) {
+                                    case 1: icon = <FaWhatsapp className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                    case 2: icon = <Instagram className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                    case 3: icon = <Globe className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                    case 4: icon = <Linkedin className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                    case 5: icon = <Youtube className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                    case 6: icon = <Facebook className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                    case 7: icon = <FaXTwitter className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                    case 8: icon = <FaBehance className="w-6 h-6" style={{ color: btnColor }} />; break;
+                                }
 
-                <div className="grid grid-cols-1 gap-4">
-                  {showcaseProducts.map((product) => (
-                    <div key={product.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center hover:border-slate-700 transition">
-                      
-                      {/* Product Preview Icon Placeholder */}
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center text-3xl flex-shrink-0 self-center sm:self-auto">
-                        {product.imageTag}
-                      </div>
+                                if (typeId === 1) {
+                                    const cleanNum = handle.soc_link.replace(/\D/g, '');
+                                    href = `https://wa.me/91${cleanNum}`;
+                                } else {
+                                    if (!href.startsWith('http')) {
+                                        href = `https://${href}`;
+                                    }
+                                }
 
-                      {/* Details Segment */}
-                      <div className="flex-grow">
-                        <div className="flex flex-wrap items-center gap-2 mb-1">
-                          <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded font-mono font-bold uppercase">
-                            {product.type}
-                          </span>
-                          <span className="text-[10px] bg-slate-950 text-slate-400 border border-slate-800 px-2 py-0.5 rounded font-medium">
-                            {product.badge}
-                          </span>
+                                return (
+                                    <a
+                                        key={handle.id}
+                                        href={href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-14 h-14 rounded-full border border-gray-500 dark:border-zinc-800 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all shrink-0 cursor-pointer"
+                                    >
+                                        {icon}
+                                    </a>
+                                );
+                            })}
+
+                            {/* Mail Icon */}
+                            {email && (
+                                <a
+                                    href={`mailto:${email}`}
+                                    className="w-14 h-14 rounded-full border border-gray-500 dark:border-zinc-800 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all shrink-0 cursor-pointer"
+                                >
+                                    <Mail className="w-6 h-6" style={{ color: btnColor }} />
+                                </a>
+                            )}
                         </div>
+                    )}
 
-                        <h4 className="text-base font-bold text-white tracking-tight">{product.name}</h4>
-                        <p className="text-xs text-emerald-400 font-medium mt-0.5">{product.condition}</p>
-
-                        {/* Feature Badges */}
-                        <div className="flex flex-wrap gap-2 mt-2.5">
-                          {product.specs.map((spec, index) => (
-                            <span key={index} className="text-[11px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-850">
-                              • {spec}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Pricing and Direct Hold Link */}
-                      <div className="sm:border-l sm:border-slate-800 sm:pl-5 flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-850 flex-shrink-0 gap-3">
-                        <div className="text-left sm:text-right">
-                          <div className="text-xs text-slate-500 line-through block font-medium">{product.savings}</div>
-                          <div className="text-xl font-black text-white">{product.price}</div>
-                        </div>
-                        <a 
-                          href={`https://wa.me/919443383084?text=Hold%20Listing:%20${encodeURIComponent(product.name)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-bold text-xs py-2 px-3.5 rounded-lg transition tracking-wide text-center"
-                        >
-                          Hold Item
-                        </a>
-                      </div>
-
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-
-            {/* TAB 3: QUALITY GUARANTEE & VERIFIED REVIEWS */}
-            {activeTab === "guarantee" && (
-              <div className="space-y-6 animate-fadeIn">
-                
-                {/* Immersive Store Quality Standards Matrix */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  
-                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                    <div className="flex items-center gap-2 text-cyan-400 font-bold text-sm mb-1.5">
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>Direct Sourced Spares</span>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      All micro-chips and laminated displays pass clean serial validation before bench release to preserve exact manufacturing standards.
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-1.5">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Transparent Strategy</span>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Surgical inspection done right in front of client view. Old extracted core displays and sub-panels returned back directly to customers.
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                    <div className="flex items-center gap-2 text-blue-400 font-bold text-sm mb-1.5">
-                      <Star className="w-4 h-4" />
-                      <span>Lifetime Warranty Link</span>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Zero latency hardware validation guarantees fast replacement support if parts fail under continuous thermal operation limits.
-                    </p>
-                  </div>
-
-                </div>
-
-                {/* Verified Testimonials Display */}
-                <div>
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <span>Recent Customer Work Records</span>
-                    <span className="h-px flex-grow bg-slate-800" />
-                  </h3>
-
-                  <div className="space-y-3">
-                    {testimonials.map((t, index) => (
-                      <div key={index} className="bg-slate-900 p-4 rounded-xl border border-slate-800/80 relative">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <span className="text-sm font-bold text-white block">{t.name}</span>
-                            <span className="text-[11px] text-cyan-400 font-medium">{t.service}</span>
-                          </div>
-                          <div className="text-right">
-                            <div className="flex gap-0.5 text-amber-400">
-                              {[...Array(t.rating)].map((_, i) => (
-                                <Star key={i} className="w-3 h-3 fill-amber-400" />
-                              ))}
+                    <div className="mb-4">
+                        {booking_url && (
+                            <div className="mb-3">
+                                <BookingModal bookingUrl={booking_url} buttonColor={btnColor} />
                             </div>
-                            <span className="text-[10px] text-slate-500 block mt-0.5">{t.date}</span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-slate-300 italic leading-relaxed">
-                          &quot;{t.comment}&quot;
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Final Offline Call Dispatch Trigger Banner */}
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 text-center space-y-3">
-                  <h4 className="text-sm font-bold text-slate-200">Have a customized diagnostic concern?</h4>
-                  <p className="text-xs text-slate-400 max-w-lg mx-auto">
-                    Direct access available directly via smartphone call queues. Offline technicians handle thermal board tests and liquid recoveries instantly.
-                  </p>
-                  <div className="pt-2">
-                    <a 
-                      href="tel:9443383084"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-slate-950 font-bold text-xs shadow transition hover:bg-slate-200 active:scale-95"
-                    >
-                      <Phone className="w-3.5 h-3.5 fill-slate-950" />
-                      <span>Direct Store Dial Connection</span>
-                    </a>
-                  </div>
-                </div>
-
-              </div>
-            )}
-
-
-            {/* TAB 4: LIVE FRANCHISE GALLERY */}
-            {activeTab === "gallery" && (
-              <div className="space-y-6 animate-fadeIn">
-                <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
-                  <span>📸 Displaying verified layout of our physical franchise branch, direct micro-soldering labs, and flagship showcases</span>
-                  <span className="font-semibold text-slate-300">6 Certified Records</span>
-                </div>
-
-                {/* High-Fidelity Multi-Column Photo Matrix */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[
-                    { src: "/gallery/store_front.jpeg", caption: "Premium Storefront Exterior Layout", icon: "🏬" },
-                    { src: "/gallery/interior_view.jpeg", caption: "Immersive Retail Counter Overview", icon: "✨" },
-                    { src: "/gallery/service_center.jpeg", caption: "Surgical Micro-Soldering Bench Setup", icon: "🔬" },
-                    { src: "/gallery/premium_showcase.jpeg", caption: "Certified Premium Devices Showcase", icon: "🛍️" },
-                    { src: "/gallery/accessories_rack.jpeg", caption: "Heavy-Duty MagSafe Gears Display", icon: "⚡" },
-                    { src: "/gallery/client_lounge.jpeg", caption: "Direct Customer Lounge & TrueTone Desks", icon: "🛋️" }
-                  ].map((imgItem, index) => (
-                    <div key={index} className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden group hover:border-cyan-500/40 transition-all duration-300 shadow-lg flex flex-col">
-                      <div className="relative w-full h-48 sm:h-56 overflow-hidden bg-slate-950">
-                        <Image 
-                          src={imgItem.src}
-                          alt={imgItem.caption}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        )}
+                        <AddToContactsButton
+                            profile={profile}
+                            buttonColor={btnColor}
+                            profileId={String(id)}
                         />
-                        <div className="absolute top-2.5 right-2.5 bg-slate-950/80 backdrop-blur-md px-2 py-1 rounded-md text-xs border border-slate-800 font-mono text-cyan-400">
-                          {imgItem.icon}
-                        </div>
-                      </div>
-                      <div className="p-3.5 bg-slate-900 border-t border-slate-800 flex-grow flex items-center justify-center">
-                        <p className="text-xs font-semibold text-slate-300 text-center tracking-tight leading-snug">
-                          {imgItem.caption}
-                        </p>
-                      </div>
+                        <ExchangeContactModal profileId={String(id)} profileName={fullName} buttonColor={btnColor} />
                     </div>
-                  ))}
                 </div>
 
-                {/* Direct Store Walk-in Direction Footprint */}
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-850 text-center">
-                  <p className="text-xs text-slate-400">
-                    📍 Direct walk-ins welcome during continuous operation shifts. Physical testing available right at our authorized service counters.
-                  </p>
-                </div>
-              </div>
-            )}
+                {/* Content Sections - Authentic ShareCard Accordion layout design */}
+                <Accordion type="multiple" className="w-full px-5">
+                    {/* Business Info Section */}
+                    {(business_logo || company_name || company_description || company_website || brochure) ? (
+                        <AccordionItem value="business-info" className="">
+                            <AccordionTrigger className="text-lg font-bold hover:no-underline py-4 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <Building2 className="w-5 h-5 text-gray-600" />
+                                    Business Info
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className="pb-4">
+                                    {business_logo && (
+                                        <div className="flex justify-start pt-2 pb-4">
+                                            <img
+                                                src={business_logo}
+                                                alt="Company Logo"
+                                                className="h-16 w-auto object-contain max-w-[200px]"
+                                            />
+                                        </div>
+                                    )}
+                                    {company_name && (
+                                        <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 pb-2">
+                                            {company_name}
+                                        </div>
+                                    )}
+                                    {company_description && (
+                                        <div className="text-base text-gray-700 dark:text-gray-300 leading-relaxed pb-4">
+                                            <p>{company_description}</p>
+                                        </div>
+                                    )}
+                                    {company_website && (
+                                        <div className="flex gap-4 flex-wrap">
+                                            <a
+                                                href={company_website}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 font-medium hover:underline cursor-pointer"
+                                                style={{ color: btnColor }}
+                                            >
+                                                <Globe className="w-4 h-4" />
+                                                Visit Website
+                                            </a>
+                                            {map_url && (
+                                                <a
+                                                    href={map_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-2 text-[#1b54e0] font-medium hover:underline cursor-pointer"
+                                                >
+                                                    <MapPin className="w-4 h-4" />
+                                                    View Location
+                                                </a>
+                                            )}
+                                        </div>
+                                    )}
+                                    {brochure && (
+                                        <div className="pt-4 flex justify-start">
+                                            <a
+                                                href={brochure}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-4 py-3 rounded-full border border-gray-500 dark:border-zinc-800 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all shrink-0 cursor-pointer text-gray-900 dark:text-gray-100"
+                                            >
+                                                <Eye className="w-5 h-5" />
+                                                View Brochure
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ) : null}
 
-          </div>
+                    {/* Positions Section */}
+                    {positionsList.length > 0 ? (
+                        <AccordionItem value="positions" className="">
+                            <AccordionTrigger className="text-lg font-bold hover:no-underline py-4 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <Briefcase className="w-5 h-5 text-gray-600" />
+                                    Positions
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className="space-y-3 pb-4">
+                                    {positionsList.map((pos: any, i: number) => (
+                                        <div key={i} className="flex gap-3 items-start p-3 rounded-lg bg-gray-50/50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
+                                            <div>
+                                                <div className="text-base font-semibold text-gray-900 dark:text-gray-100">{pos.title}</div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-400">{pos.org}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ) : null}
+
+                    {/* Services Section */}
+                    {servicesList.length > 0 ? (
+                        <AccordionItem value="services" className="">
+                            <AccordionTrigger className="text-lg font-bold hover:no-underline py-4 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <Wrench className="w-5 h-5 text-gray-600" />
+                                    Services
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <ul className="list-disc list-outside ml-4 space-y-1 text-base text-gray-700 dark:text-gray-300 marker:text-gray-400 pb-4">
+                                    {servicesList.map((service, i) => (
+                                        <li key={i} className="pl-1">{service}</li>
+                                    ))}
+                                </ul>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ) : null}
+
+                    {/* Products Section */}
+                    {products && products.length > 0 ? (
+                        <AccordionItem value="products" className="">
+                            <AccordionTrigger className="text-lg font-bold hover:no-underline py-4 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <Package className="w-5 h-5 text-gray-600" />
+                                    Products
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className="grid grid-cols-2 gap-3 pb-4">
+                                    {products.map((prod: any, i: number) => {
+                                        const images = prod.prod_images || [];
+
+                                        return (
+                                            <a
+                                                key={i}
+                                                href={prod.prod_url || '#'}
+                                                target={prod.prod_url ? "_blank" : "_self"}
+                                                rel="noopener noreferrer"
+                                                className={`${!prod.prod_url ? 'cursor-default pointer-events-none' : 'cursor-pointer'} group block`}
+                                            >
+                                                <div className="h-full dark:bg-zinc-900 dark:border-zinc-800">
+                                                    <div>
+                                                        {images && images[0] ? (
+                                                            <div className="aspect-square relative mb-2 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
+                                                                <img src={images[0]} alt={prod.prod_name} className="object-cover w-full h-full" />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="aspect-square relative mb-2 rounded-md overflow-hidden bg-gray-100 dark:bg-zinc-800 flex items-center justify-center">
+                                                                <Package className="w-8 h-8 text-gray-400" />
+                                                            </div>
+                                                        )}
+                                                        <h4 className="font-semibold text-base line-clamp-1 text-gray-900 dark:text-gray-100" title={prod.prod_name}>{prod.prod_name}</h4>
+                                                        {prod.prod_description && (
+                                                            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1 line-clamp-2" title={prod.prod_description}>
+                                                                {prod.prod_description}
+                                                            </p>
+                                                        )}
+                                                        <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mt-2 flex items-center gap-1">
+                                                            {(prod.prod_type === 'Physical' && prod.prod_price > 0) ? `₹${prod.prod_price} • ` : ''}
+                                                            <span className="group-hover:underline">View Product</span>
+                                                            <ExternalLink className="w-3 h-3" />
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ) : null}
+
+                    {/* Gallery Section */}
+                    {gallery && gallery.length > 0 ? (
+                        <AccordionItem value="gallery" className="border-b-0">
+                            <AccordionTrigger className="text-lg font-bold hover:no-underline py-4 cursor-pointer">
+                                <div className="flex items-center gap-2">
+                                    <ImageIcon className="w-5 h-5 text-gray-600" />
+                                    Gallery
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pb-4">
+                                    {gallery.map((img: any, i: number) => (
+                                        <div key={i} className="aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-800">
+                                            <img src={img.image_url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ) : null}
+                </Accordion>
+
+                {/* Footer Actions */}
+                <div className="mt-8 space-y-6">
+                    <div className="text-center pb-6">
+                        <p className="text-xs text-gray-400 mt-2 flex items-center justify-center gap-1.5">
+                            Powered by
+                            <a href="https://sharecard.co.in" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                                <Image
+                                    src="/ShareCard Logo.svg"
+                                    alt="ShareCard"
+                                    width={80}
+                                    height={20}
+                                    className="h-5 w-auto grayscale opacity-50 hover:opacity-100 hover:grayscale-0 transition-all"
+                                    style={{ width: 'auto' }}
+                                />
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
         </div>
-
-      </div>
-
-      {/* Standalone Sleek Bottom Footprint */}
-      <footer className="absolute bottom-0 inset-x-0 py-6 border-t border-slate-900 text-center text-xs text-slate-500">
-        <p>© 2026 iMobiles Premium Care Direct Client Delivery. All hardware registered to respective flagships.</p>
-      </footer>
-    </div>
-  );
+    );
 }
