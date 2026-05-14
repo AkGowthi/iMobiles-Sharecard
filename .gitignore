@@ -37,6 +37,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Next.js backup source (old framework code)
+/nextjs_source_backup/
+
+# Next.js public dir convention (unused in static deployment)
+/public/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
