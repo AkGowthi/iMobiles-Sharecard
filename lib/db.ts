@@ -1,21 +1,13 @@
 import { Sequelize } from 'sequelize';
 
-const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_SYNC: DB_SYNC_ENV } = process.env;
+const DB_HOST = process.env.DB_HOST || '127.0.0.1';
+const DB_PORT = process.env.DB_PORT || '3306';
+const DB_USER = process.env.DB_USER || 'root';
+const DB_PASSWORD = process.env.DB_PASSWORD || '';
+const DB_NAME = process.env.DB_NAME || 'sharecard';
+const DB_SYNC_ENV = process.env.DB_SYNC;
 
 export const DB_SYNC = DB_SYNC_ENV === 'true';
-
-// Validate required environment variables
-if (!DB_HOST) {
-    throw new Error('Invalid/Missing environment variable: "DB_HOST"');
-}
-
-if (!DB_NAME) {
-    throw new Error('Invalid/Missing environment variable: "DB_NAME"');
-}
-
-if (!DB_USER) {
-    throw new Error('Invalid/Missing environment variable: "DB_USER"');
-}
 
 // Clean password - remove quotes if present and handle empty strings
 const cleanPassword = DB_PASSWORD 
