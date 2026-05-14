@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
 // Client static fallback for purely uncoupled HTML presentations
-const trackEvent = async (profileId: string, eventType: string, eventData?: any, visitorId?: string) => {
-    console.log("Static Analytics Tracked:", eventType, profileId);
+const trackEvent = async (profileId: string, eventType: string, eventData?: Record<string, unknown>, visitorId?: string) => {
+    console.log("Static Analytics Tracked:", eventType, profileId, eventData, visitorId);
     return { success: true };
 };
 
@@ -35,7 +35,7 @@ export function ViewTracker({ profileId }: { profileId: string }) {
 }
 
 // Helper to track clicks
-export const trackClick = async (profileId: string, type: 'CLICK_CONTACT' | 'CLICK_SOCIAL' | 'CLICK_LINK' | 'CLICK_PRODUCT' | 'SHARE', data: any) => {
+export const trackClick = async (profileId: string, type: 'CLICK_CONTACT' | 'CLICK_SOCIAL' | 'CLICK_LINK' | 'CLICK_PRODUCT' | 'SHARE', data: Record<string, unknown>) => {
     const visitorId = localStorage.getItem("sc_visitor_id");
     await trackEvent(profileId, type, data, visitorId || undefined);
 };
