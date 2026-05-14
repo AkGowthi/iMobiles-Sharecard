@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Mail, MapPin, Phone, Briefcase, Instagram, Linkedin, Youtube, Facebook, Globe, Link as LinkIcon, Building2, Wrench, Package, Image as ImageIcon, ExternalLink, Eye } from "lucide-react";
 import { FaWhatsapp, FaBehance, FaXTwitter } from "react-icons/fa6";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -9,9 +8,60 @@ import { AddToContactsButton } from "@/components/features/public-profile/add-to
 import { ExchangeContactModal } from "@/components/features/public-profile/exchange-contact-modal";
 import { BookingModal } from "@/components/features/public-profile/booking-modal";
 
+interface SocialHandle {
+    id: number;
+    type_id: number;
+    soc_link: string;
+}
+
+interface PositionItem {
+    title: string;
+    org: string;
+}
+
+interface ProductItem {
+    prod_name: string;
+    prod_description: string;
+    prod_type: string;
+    prod_price: number;
+    prod_images: string[];
+    prod_url: string;
+}
+
+interface GalleryItem {
+    image_url: string;
+}
+
+interface StaticProfile {
+    id: number;
+    f_name: string;
+    l_name: string;
+    profession: string;
+    company_name: string;
+    company_description: string;
+    company_website: string;
+    bio: string;
+    address: string;
+    map_url: string;
+    email: string;
+    phone_no: string;
+    userImage: string;
+    business_logo: string;
+    socialHandles: SocialHandle[];
+    positions: PositionItem[];
+    services: string[];
+    products: ProductItem[];
+    gallery: GalleryItem[];
+    brochure: string;
+    theme_color: string;
+    button_color: string;
+    card_layout: string;
+    booking_url: string;
+}
+
 export default function RootPublicProfilePage() {
     // Static Pre-populated Profile matching ShareCard db spec for completely backend-less static deployment
-    const profile: any = {
+    const profile: StaticProfile = {
         id: 1,
         f_name: "Karthikeyan",
         l_name: "",
@@ -73,7 +123,7 @@ export default function RootPublicProfilePage() {
         booking_url: ""
     };
 
-    const { id, f_name, l_name, profession, company_name, company_description, company_website, map_url, email, phone_no, userImage, business_logo, socialHandles, products, gallery, services, brochure, theme_color, button_color, booking_url } = profile;
+    const { id, f_name, profession, company_name, company_description, company_website, map_url, email, phone_no, userImage, business_logo, socialHandles, products, gallery, brochure, theme_color, button_color, booking_url } = profile;
     const fullName = `${f_name}`.trim();
 
     // Default colors
@@ -81,7 +131,7 @@ export default function RootPublicProfilePage() {
     const btnColor = button_color || "#1B54E0";
 
     const servicesList: string[] = profile.services || [];
-    const positionsList: any[] = profile.positions || [];
+    const positionsList: PositionItem[] = profile.positions || [];
 
     return (
         <div className="min-h-screen flex justify-center font-sans text-gray-900 dark:text-gray-100" style={{ backgroundColor: bgTheme }}>
@@ -129,7 +179,7 @@ export default function RootPublicProfilePage() {
                             )}
 
                             {/* Social Icons */}
-                            {socialHandles && socialHandles.length > 0 && socialHandles.map((handle: any) => {
+                            {socialHandles && socialHandles.length > 0 && socialHandles.map((handle: SocialHandle) => {
                                 const typeId = Number(handle.type_id);
                                 let icon = <LinkIcon className="w-6 h-6" style={{ color: btnColor }} />;
                                 let href = handle.soc_link;
@@ -209,9 +259,11 @@ export default function RootPublicProfilePage() {
                                 <div className="pb-4">
                                     {business_logo && (
                                         <div className="flex justify-start pt-2 pb-4">
-                                            <img
+                                            <Image
                                                 src={business_logo}
                                                 alt="Company Logo"
+                                                width={200}
+                                                height={64}
                                                 className="h-16 w-auto object-contain max-w-[200px]"
                                             />
                                         </div>
@@ -280,7 +332,7 @@ export default function RootPublicProfilePage() {
                             </AccordionTrigger>
                             <AccordionContent>
                                 <div className="space-y-3 pb-4">
-                                    {positionsList.map((pos: any, i: number) => (
+                                    {positionsList.map((pos: PositionItem, i: number) => (
                                         <div key={i} className="flex gap-3 items-start p-3 rounded-lg bg-gray-50/50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800">
                                             <div>
                                                 <div className="text-base font-semibold text-gray-900 dark:text-gray-100">{pos.title}</div>
@@ -304,7 +356,7 @@ export default function RootPublicProfilePage() {
                             </AccordionTrigger>
                             <AccordionContent>
                                 <ul className="list-disc list-outside ml-4 space-y-1 text-base text-gray-700 dark:text-gray-300 marker:text-gray-400 pb-4">
-                                    {servicesList.map((service, i) => (
+                                    {servicesList.map((service: string, i: number) => (
                                         <li key={i} className="pl-1">{service}</li>
                                     ))}
                                 </ul>
@@ -323,7 +375,7 @@ export default function RootPublicProfilePage() {
                             </AccordionTrigger>
                             <AccordionContent>
                                 <div className="grid grid-cols-2 gap-3 pb-4">
-                                    {products.map((prod: any, i: number) => {
+                                    {products.map((prod: ProductItem, i: number) => {
                                         const images = prod.prod_images || [];
 
                                         return (
@@ -338,7 +390,7 @@ export default function RootPublicProfilePage() {
                                                     <div>
                                                         {images && images[0] ? (
                                                             <div className="aspect-square relative mb-2 rounded-md overflow-hidden bg-gray-100 border border-gray-200">
-                                                                <img src={images[0]} alt={prod.prod_name} className="object-cover w-full h-full" />
+                                                                <Image src={images[0]} alt={prod.prod_name} fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
                                                             </div>
                                                         ) : (
                                                             <div className="aspect-square relative mb-2 rounded-md overflow-hidden bg-gray-100 dark:bg-zinc-800 flex items-center justify-center">
@@ -377,9 +429,9 @@ export default function RootPublicProfilePage() {
                             </AccordionTrigger>
                             <AccordionContent>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pb-4">
-                                    {gallery.map((img: any, i: number) => (
-                                        <div key={i} className="aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-800">
-                                            <img src={img.image_url} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+                                    {gallery.map((img: GalleryItem, i: number) => (
+                                        <div key={i} className="aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-800 relative">
+                                            <Image src={img.image_url} alt={`Gallery ${i + 1}`} fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
                                         </div>
                                     ))}
                                 </div>
