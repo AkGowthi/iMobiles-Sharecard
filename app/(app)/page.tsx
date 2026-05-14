@@ -15,13 +15,14 @@ import {
   BatteryCharging,
   Cpu,
   ChevronRight,
-  Clock
+  Clock,
+  Image as ImageIcon
 } from "lucide-react";
 import Image from "next/image";
 
 export default function MobileStoreProfilePage() {
   // Navigation tabs state
-  const [activeTab, setActiveTab] = useState<"repairs" | "showcase" | "guarantee">("repairs");
+  const [activeTab, setActiveTab] = useState<"repairs" | "showcase" | "guarantee" | "gallery">("repairs");
 
   // Interactive Live Estimator State
   const [selectedDevice, setSelectedDevice] = useState<string>("iPhone 15 Pro Max");
@@ -326,12 +327,21 @@ export default function MobileStoreProfilePage() {
             </button>
             <button
               onClick={() => setActiveTab("guarantee")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition-all duration-300 ${activeTab === "guarantee" 
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "guarantee" 
                 ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md" 
                 : "text-slate-400 hover:text-slate-200"}`}
             >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Quality & Reviews</span>
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Quality</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("gallery")}
+              className={`flex-1 flex items-center justify-center gap-2 py-3 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 ${activeTab === "gallery" 
+                ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md" 
+                : "text-slate-400 hover:text-slate-200"}`}
+            >
+              <ImageIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span>Gallery</span>
             </button>
           </div>
 
@@ -685,6 +695,56 @@ export default function MobileStoreProfilePage() {
                   </div>
                 </div>
 
+              </div>
+            )}
+
+
+            {/* TAB 4: LIVE FRANCHISE GALLERY */}
+            {activeTab === "gallery" && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+                  <span>📸 Displaying verified layout of our physical franchise branch, direct micro-soldering labs, and flagship showcases</span>
+                  <span className="font-semibold text-slate-300">6 Certified Records</span>
+                </div>
+
+                {/* High-Fidelity Multi-Column Photo Matrix */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { src: "/gallery/store_front.jpeg", caption: "Premium Storefront Exterior Layout", icon: "🏬" },
+                    { src: "/gallery/interior_view.jpeg", caption: "Immersive Retail Counter Overview", icon: "✨" },
+                    { src: "/gallery/service_center.jpeg", caption: "Surgical Micro-Soldering Bench Setup", icon: "🔬" },
+                    { src: "/gallery/premium_showcase.jpeg", caption: "Certified Premium Devices Showcase", icon: "🛍️" },
+                    { src: "/gallery/accessories_rack.jpeg", caption: "Heavy-Duty MagSafe Gears Display", icon: "⚡" },
+                    { src: "/gallery/client_lounge.jpeg", caption: "Direct Customer Lounge & TrueTone Desks", icon: "🛋️" }
+                  ].map((imgItem, index) => (
+                    <div key={index} className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden group hover:border-cyan-500/40 transition-all duration-300 shadow-lg flex flex-col">
+                      <div className="relative w-full h-48 sm:h-56 overflow-hidden bg-slate-950">
+                        <Image 
+                          src={imgItem.src}
+                          alt={imgItem.caption}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute top-2.5 right-2.5 bg-slate-950/80 backdrop-blur-md px-2 py-1 rounded-md text-xs border border-slate-800 font-mono text-cyan-400">
+                          {imgItem.icon}
+                        </div>
+                      </div>
+                      <div className="p-3.5 bg-slate-900 border-t border-slate-800 flex-grow flex items-center justify-center">
+                        <p className="text-xs font-semibold text-slate-300 text-center tracking-tight leading-snug">
+                          {imgItem.caption}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Direct Store Walk-in Direction Footprint */}
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-850 text-center">
+                  <p className="text-xs text-slate-400">
+                    📍 Direct walk-ins welcome during continuous operation shifts. Physical testing available right at our authorized service counters.
+                  </p>
+                </div>
               </div>
             )}
 
